@@ -2,7 +2,7 @@
 
 LISTENAI's AI coding assistant skills collection. Pure documentation repo — no build/test commands.
 
-- **GitHub**: [LISTENAI/skills](https://github.com/LISTENAI/skills)
+- **GitHub**: [conor-yek/skills](https://github.com/conor-yek/skills)
 - **License**: MIT
 
 ## Repository Structure

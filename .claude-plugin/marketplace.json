@@ -1,13 +1,13 @@
 {
   "name": "listenai-skills",
   "owner": {
-    "name": "LISTENAI",
-    "url": "https://github.com/ConorYek"
+    "name": "conor-yek",
+    "url": "https://github.com/conor-yek"
   },
   "metadata": {
     "description": "LISTENAI's AI coding assistant skills collection",
     "version": "1.0.0",
-    "repository": "https://github.com/ConorYek/skills"
+    "repository": "https://github.com/conor-yek/skills"
   },
   "plugins": [
     {
