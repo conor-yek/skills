@@ -27,6 +27,15 @@
       "skills": [
         "./skills/commit-msg"
       ]
+    },
+    {
+      "name": "sdk-assistant-agent",
+      "description": "ARCS SDK / LISTENAI SDK 开发助手统一入口。自动路由驱动开发、构建调试、样例生成、组件开发、代码审查、文档编写等任务。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/sdk-assistant-agent"
+      ]
     }
   ]
 }

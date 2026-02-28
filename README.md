@@ -43,6 +43,7 @@ Claude Code 用户也可通过 Marketplace 安装：
 | ---- | ---- |
 | `arcs-dev-tools` | ARCS SDK 工具链操作：拉取仓库、环境安装、编译、烧录、运行与串口日志读取 |
 | `commit-msg` | 根据当前代码改动生成中文 git 提交信息，支持 Conventional Commits 格式，使用 `git commit -s` 创建签名提交 |
+| `sdk-assistant-agent` | ARCS SDK / LISTENAI SDK 开发助手统一入口，自动路由驱动开发、构建调试、样例生成、组件开发、代码审查、文档编写等任务 |
 
 ## 技能工作原理
 
