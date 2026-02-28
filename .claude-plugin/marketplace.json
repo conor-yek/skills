@@ -18,6 +18,15 @@
       "skills": [
         "./skills/arcs-dev-tools"
       ]
+    },
+    {
+      "name": "commit-msg",
+      "description": "Generate Chinese git commit messages based on current code changes and create signed commits.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/commit-msg"
+      ]
     }
   ]
 }
