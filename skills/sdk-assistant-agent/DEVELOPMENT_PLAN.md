@@ -21,19 +21,33 @@
 **目标**: 建立 Agent 骨架和知识基线
 
 **已完成的工作**:
-- [x] 统一入口 `SKILL.md` — 意图识别 + 路由逻辑 + 质量检查 + 反馈收集
+- [x] 统一入口 `SKILL.md` — 意图识别 + 路由逻辑
 - [x] 进化机制 `evolution/SKILL.md` — 知识审计 + 变更检测 + 更新流程
 - [x] 5 个子 skill stub: driver-dev, build-debug, sample-gen, code-review, component-dev
-- [x] 知识库初始化（已迁移至 `knowledge/` 统一管理）:
-  - `knowledge/sdk-patterns.md` — 6 大设计模式
-  - `knowledge/driver-patterns.md` — 驱动模板与陷阱
+- [x] 知识库初始化（`knowledge/` 统一管理）:
+  - `knowledge/sdk-patterns.md` — SDK 通用设计模式
+  - `knowledge/driver-patterns.md` — 驱动模板
   - `knowledge/build-issues.md` — 构建问题速查
   - `knowledge/evolution-log.md` — 进化记录
   - `knowledge/sdk-architecture.md` — 架构全景图 + 启动流程 + 构建系统
   - `knowledge/conventions.md` — 编码约定速查
-  - `memory/MEMORY.md` — 轻量索引（auto memory，自动加载）
+  - `knowledge/online-docs.md` — 在线文档 URL 索引
 
 **产出版本**: v0.1.0 (2026-02-26)
+
+### Phase 1.5: 框架重构 ✅ 已完成 (2026-03-02)
+
+**目标**: 提升 skill 文件对 LLM 的友好度，明确文件职责
+
+**已完成的工作**:
+- [x] 主 `SKILL.md` 瘦身（143→47 行）：移除预加载、质量检查、反馈收集，精简为纯路由器
+- [x] 新增 `references/index.md` — 系统全景图，ROUTER/WORKER/REFERENCE/META 角色分类
+- [x] `driver-dev/` 展平：`lisa_xxx/SKILL.md` → `lisa_xxx.md`，移除 frontmatter 和静态知识
+- [x] 驱动 worker 统一为"资源索引 + 执行指令"格式（19 行/文件），无内嵌 API 说明
+- [x] 修复 `evolution/SKILL.md` 路径引用错误
+- [x] 完善 `SKILL_DESIGN_PRINCIPLES.md`（原则六、七、八更新，自检清单分类）
+
+**产出版本**: v0.2.0 (2026-03-02)
 
 ---
 
@@ -41,18 +55,15 @@
 
 **目标**: 将 driver-dev 和 build-debug 两个高频 skill 从 stub 升级为完整实现
 
-#### 2.1 driver-dev 完整实现
-- [ ] 深入分析 3-5 个现有驱动的实际代码，提取精确模板
-  - 参考目标: `lisa_uart`, `lisa_spi`, `lisa_i2c`, `lisa_flash`, `lisa_display`
-  - 关注: 实际的 API 签名、私有数据结构、初始化流程、中断处理
-- [ ] 完善 SKILL.md 中的代码生成模板
-  - 头文件完整模板（含 C++ extern "C" 保护）
-  - 平台适配层完整模板（含私有数据、中断处理、DMA 模式）
-  - 针对不同设备类型的模板变体（传感器 / 通信 / 存储 / 显示）
-- [ ] 添加交互式需求收集流程
-  - 设备类型选择 → 通信方式 → 功能列表 → 回调需求
-- [ ] 添加生成后自动验证 checklist
-- [ ] 用一个实际驱动验证完整流程
+#### 2.1 driver-dev 完整实现 ✅ 已完成（方式调整，2026-03-02）
+
+原计划内嵌代码模板和静态 API 说明，与 Phase 1.5 确立的设计原则冲突（原则二：用活数据源替代静态知识）。
+
+**实际完成方式**:
+- [x] 20 个设备 worker 统一采用"资源索引 + 并行加载指令"格式
+- [x] 不内嵌 API 说明，改为 `Read 头文件 + WebFetch 在线文档 + Glob 示例目录`
+- [x] 开发细节由 AI 结合资源自行判断，只确认无法推断的硬件参数（引脚、实例等）
+- [x] 覆盖全部 20 种设备：GPIO/UART/SPI/I2C/Flash/ADC/PWM/HWTIMER/RTC/WDT/SDMMC/I2S/Display/Touch/Audio/QSPILCD/DVP/Camera/RGB/Pinmux
 
 #### 2.2 build-debug 完整实现 ✅ 已完成 (2026-02-27)
 - [x] 建立错误模式库（从 codebase 和构建系统中提取）
@@ -137,16 +148,16 @@
 
 **影响**: 所有子 skill 通过 `读取 xxx/SKILL.md 执行` 的方式被调用，而非系统级 skill 注册。
 
-### DD-002: 知识存储 — knowledge/ 统一目录 + memory/ 轻量索引
+### DD-002: 知识存储 — knowledge/ 统一目录
 
-**决策** (v2, 2026-02-27 更新): 所有详细知识文件统一放在工程内 `knowledge/` 目录，`memory/MEMORY.md` 仅作为轻量索引指向工程目录。
-- `knowledge/` — 所有知识文件（sdk-patterns, driver-patterns, build-issues, evolution-log, sdk-architecture, conventions）
-- `memory/MEMORY.md` — 精简索引，自动加载到每次对话上下文
+**决策** (v3, 2026-03-02 更新): 所有知识文件统一放在工程内 `knowledge/` 目录，由各 worker 按需加载。
+- `knowledge/` — 所有知识文件（sdk-patterns, driver-patterns, build-issues, evolution-log, sdk-architecture, conventions, online-docs）
+- `references/index.md` — 系统全景图，描述所有文件角色和加载时机
 
 **原因**:
-- 工程内文件可 git 管理和团队共享，auto memory 不在 git 中
-- memory/ 受 MEMORY.md 200 行限制，仅适合做索引
-- 演进更新时只需修改工程内文件，路径统一
+- 工程内文件可 git 管理和团队共享
+- `references/index.md` 作为轻量系统地图，替代旧的 `memory/MEMORY.md` 索引角色
+- Worker 文件引用知识文件，不内嵌知识内容（原则七）
 
 ### DD-003: 进化机制 — 独立 Skill + 记录日志
 
@@ -186,27 +197,21 @@
 | 阶段 | 状态 | 完成度 |
 |------|------|--------|
 | Phase 1: 基础框架 | ✅ 完成 | 100% |
-| Phase 2: 核心 Skill | 🔄 进行中 | 67% (build-debug ✅, sample-gen ✅) |
-| Phase 3: 扩展 Skill | 📋 计划中 | 0% |
+| Phase 1.5: 框架重构 | ✅ 完成 | 100% |
+| Phase 2: 核心 Skill | ✅ 完成 | 100% (driver-dev ✅, build-debug ✅, sample-gen ✅) |
+| Phase 3: 扩展 Skill | 🔄 进行中 | 0% |
 | Phase 4: 集成优化 | 📋 计划中 | 0% |
 
-**当前焦点**: Phase 2 — build-debug ✅, sample-gen ✅，下一步: driver-dev 完整实现
+**当前焦点**: Phase 3.1 — code-review 完整实现
 
 ---
 
 ## 下一步行动
 
-### 即刻启动: Phase 2 规划
+### 即刻启动: Phase 3.1 code-review
 
-1. **driver-dev 深度分析** — 读取 3-5 个现有驱动的完整源码，提取精确的代码模式
-2. **build-debug 错误库** — 分析构建系统，建立错误诊断树
-3. **sample-gen 模式提取** — 分析现有 samples 结构
-
-### Phase 2 执行策略
-
-建议按以下顺序逐个完成：
-1. driver-dev（最复杂，需要最多 codebase 分析）
-2. build-debug（可复用 driver-dev 分析中积累的构建知识）
-3. sample-gen（可复用前两者的模板和模式知识）
-
-每个 skill 完成后通过实际使用场景验证，发现的问题反馈到进化机制。
+实现要点（遵循设计原则）：
+1. **审查范围识别** — 支持 git diff / 指定文件 / PR 三种输入方式
+2. **知识加载** — 读取 `knowledge/conventions.md`，按代码类型按需加载 `driver-patterns.md` 或 `sdk-patterns.md`
+3. **可验证 checklist** — 每条审查项均可通过 Grep 确认，不写"应该"类模糊项
+4. **结构化报告** — 按维度输出问题列表 + 修改建议
