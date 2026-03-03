@@ -20,12 +20,12 @@
       ]
     },
     {
-      "name": "commit-msg",
-      "description": "Generate Chinese git commit messages based on current code changes and create signed commits.",
+      "name": "smart-commit",
+      "description": "Smart Git commit assistant with submodule awareness. Generates Chinese Conventional Commits messages, runs safety checks, and creates signed commits.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/commit-msg"
+        "./skills/smart-commit"
       ]
     },
     {
